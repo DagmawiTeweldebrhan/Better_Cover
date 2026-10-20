@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @theme { --font-sans: "Segoe UI", Arial, sans-serif; }
-:root { font-family: var(--font-sans); color: #273b31; background: #f6f7f2; font-synthesis: none; font-size: 13px; }
+:root { font-family: "Segoe UI", Arial, sans-serif; color: #273b31; background: #f6f7f2; font-synthesis: none; font-size: 13px; }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
 button, input, select, textarea { font: inherit; }
