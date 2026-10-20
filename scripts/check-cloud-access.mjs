@@ -15,7 +15,7 @@ if (missing.length) {
   process.exitCode = 1;
 } else {
   const checks = [
-    { name: 'Supabase', url: 'https://api.supabase.com/v1/organizations', key: 'SUPABASE_ACCESS_TOKEN' },
+    { name: 'Supabase', url: 'https://api.supabase.com/v1/projects', key: 'SUPABASE_ACCESS_TOKEN' },
     { name: 'Render', url: 'https://api.render.com/v1/owners?limit=20', key: 'RENDER_API_KEY' },
   ];
   const results = await Promise.allSettled(checks.map(async check => {
@@ -25,8 +25,8 @@ if (missing.length) {
     });
     if (!response.ok) throw new Error(`${check.name} access check returned HTTP ${response.status}.`);
     const data = await response.json();
-    if (!Array.isArray(data) || data.length === 0) throw new Error(`${check.name} token exposes no organizations or workspaces.`);
-    console.log(`${check.name}: account access verified (${data.length} organization/workspace entries).`);
+    if (!Array.isArray(data) || data.length === 0) throw new Error(`${check.name} token exposes no ${check.name === 'Supabase' ? 'projects' : 'workspaces'}.`);
+    console.log(`${check.name}: account access verified (${data.length} ${check.name === 'Supabase' ? 'project' : 'workspace'} entries).`);
   }));
   for (const result of results) if (result.status === 'rejected') {
     console.error(result.reason instanceof Error ? result.reason.message : 'Cloud access check failed.');
