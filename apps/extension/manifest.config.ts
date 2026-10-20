@@ -1,4 +1,5 @@
 import { defineManifest } from '@crxjs/vite-plugin';
+import identity from '../../config/extension-identity.json';
 
 export const jobMatches = [
   '*://*.linkedin.com/*', '*://*.indeed.com/*', '*://*.greenhouse.io/*',
@@ -13,7 +14,7 @@ export function manifest(apiUrl: string, publicKey?: string) {
     manifest_version: 3, name: 'Better Cover', version: '1.0.0',
     description: 'Turn your experience and a job description into a tailored cover letter.',
     minimum_chrome_version: '116',
-    ...(publicKey ? { key: publicKey } : {}),
+    key: publicKey || identity.publicKey,
     permissions: ['activeTab', 'storage', 'sidePanel', 'identity', 'scripting'],
     host_permissions: [...jobMatches, `${api.origin}/*`],
     icons: { 16: 'icons/16.png', 32: 'icons/32.png', 48: 'icons/48.png', 128: 'icons/128.png' },
