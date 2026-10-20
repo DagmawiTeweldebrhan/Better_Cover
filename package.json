@@ -12,9 +12,13 @@
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "vitest run",
-    "check": "npm run typecheck && npm test && npm run build"
+    "check": "npm run typecheck && npm test && npm run build",
+    "preview:test": "node scripts/preview.mjs",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
+    "@playwright/test": "^1.64.1",
     "@types/node": "^24.0.0",
     "jsdom": "^26.1.0",
     "typescript": "^5.9.3",
