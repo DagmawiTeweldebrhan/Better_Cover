@@ -55,6 +55,8 @@ npm.cmd audit
 
 `check` runs type checking, API/extractor/database tests, both production builds, and a packaged-extension entry-point check. Database tests execute the migration in an in-memory PostgreSQL instance with Supabase auth roles and RLS. Browser tests exercise the UI with controlled responses and load the actual compiled extension in Chromium. They require no paid APIs or real account credentials. Live Supabase, Google, OpenAI calls and current authenticated job-board markup must also be checked with your configured accounts before release.
 
+With real backend credentials configured, `npm.cmd run test:live -- --skip-generation` verifies authentication and resume CRUD without AI charges. Omit `--skip-generation` only when you intend to exercise the configured generation provider. These checks use synthetic data and delete their own test account afterward. See [deployment state](docs/DEPLOYMENT.md) for the current external-service blockers.
+
 ## Deploy
 
 For account provisioning access, copy `.env.provision.example` to `.env.provision` and fill the Supabase personal access token, Render API key, and server-only OpenAI API key locally. The filled file is ignored by Git. Run `npm.cmd run check:cloud` to verify account access without creating resources or making paid generation requests. The [store listing draft](docs/STORE_LISTING.md) includes submission text, permission justifications, and the remaining live details needed for review.

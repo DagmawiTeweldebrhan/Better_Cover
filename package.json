@@ -18,7 +18,8 @@
     "test:e2e": "playwright test",
     "icons": "node scripts/create-icons.mjs",
     "demo": "npm run build -w @better-cover/extension && node scripts/demo.mjs",
-    "check:cloud": "node scripts/check-cloud-access.mjs"
+    "check:cloud": "node scripts/check-cloud-access.mjs",
+    "test:live": "npm run build -w @better-cover/api && node scripts/smoke-live.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.10",
