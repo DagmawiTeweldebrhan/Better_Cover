@@ -57,6 +57,8 @@ npm.cmd audit
 
 ## Deploy
 
+For account provisioning access, copy `.env.provision.example` to `.env.provision` and fill the Supabase personal access token, Render API key, and server-only OpenAI API key locally. The filled file is ignored by Git. Run `npm.cmd run check:cloud` to verify account access without creating resources or making paid generation requests. The [store listing draft](docs/STORE_LISTING.md) includes submission text, permission justifications, and the remaining live details needed for review.
+
 The [Render blueprint](render.yaml) builds and runs the API from this workspace. Import it in Render, review the selected service plan, and set the required environment values. Use the resulting HTTPS URL as `VITE_API_URL`, rebuild the extension, and reload it. The manifest automatically includes the API origin. Run one API instance with the current in-memory rate limiter; use a shared rate-limit store before adding instances. `TRUST_PROXY_HOPS=1` is supplied for Render; use `0` for a direct local server.
 
 GitHub Actions verifies pushes and pull requests and uploads the built extension as an artifact. Zip the **contents** of `apps/extension/dist` for store submission. Browser icons are included; run `npm.cmd run icons` after editing `apps/extension/public/icon.svg` to regenerate them. Supply store listings, screenshots, a hosted privacy policy, and developer-account details before publishing. Neither cloud deployment nor store publication is performed by a Git push.
