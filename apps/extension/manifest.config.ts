@@ -5,7 +5,7 @@ export const jobMatches = [
   '*://*.linkedin.com/*', '*://*.indeed.com/*', '*://*.greenhouse.io/*',
   '*://*.lever.co/*', '*://*.joinhandshake.com/*',
 ];
-export function manifest(apiUrl: string, publicKey?: string) {
+export function manifest(apiUrl: string, publicKey?: string, cloudMode = false) {
   const api = new URL(apiUrl);
   if (api.protocol !== 'https:' && !(api.protocol === 'http:' && api.hostname === 'localhost')) {
     throw new Error('API URL must use HTTPS (except localhost development).');
@@ -15,8 +15,8 @@ export function manifest(apiUrl: string, publicKey?: string) {
     description: 'Turn your experience and a job description into a tailored cover letter.',
     minimum_chrome_version: '116',
     key: publicKey || identity.publicKey,
-    permissions: ['activeTab', 'storage', 'sidePanel', 'identity', 'scripting'],
-    host_permissions: [...jobMatches, `${api.origin}/*`],
+    permissions: ['activeTab', 'storage', 'sidePanel', 'scripting', ...(cloudMode ? ['identity' as const] : [])],
+    host_permissions: [...jobMatches, ...(cloudMode ? [`${api.origin}/*`] : [])],
     icons: { 16: 'icons/16.png', 32: 'icons/32.png', 48: 'icons/48.png', 128: 'icons/128.png' },
     action: { default_title: 'Open Better Cover', default_icon: { 16: 'icons/16.png', 32: 'icons/32.png' } },
     side_panel: { default_path: 'index.html' },

@@ -35,7 +35,5 @@ export function createTemplateDraft(input: GenerateInput, resume: string): strin
   else paragraphs.push('I have attached my resume for your review and would appreciate the opportunity to discuss the parts of my background most relevant to this role.');
   if (input.length === 'long') paragraphs.push(`I would also value learning more about your team's priorities for this position and how success is measured at ${input.companyName}.`);
   paragraphs.push('Thank you for considering my application. I look forward to the possibility of discussing this opportunity with you.', 'Sincerely,');
-  const name = lines[0];
-  if (name && /^[\p{L}][\p{L} .'-]{2,60}$/u.test(name) && name.split(/\s+/).length >= 2 && name.split(/\s+/).length <= 4 && !/resume|curriculum|engineer|developer|profile|summary/i.test(name)) paragraphs.push(name);
   return paragraphs.join('\n\n');
 }

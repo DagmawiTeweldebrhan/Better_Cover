@@ -3,6 +3,7 @@ import { generateSchema, resumeSchema, type Generation, type GenerateInput, type
 import { api, message } from './lib/client';
 
 type Tab = 'write' | 'resumes' | 'history';
+const localMode = import.meta.env.VITE_DRAFT_MODE !== 'cloud';
 const emptyJob: Job = { jobTitle: '', companyName: '', jobDescription: '', platform: 'Manual' };
 const emptyResume = { title: '', content: '' };
 type Draft = { job: Job; selectedResume: string; tone: GenerateInput['tone']; length: GenerateInput['length']; custom: string; output: string };
@@ -100,7 +101,7 @@ export default function App() {
       if (!parsed.success) throw new Error(parsed.error.issues[0].message);
       const result = await api<GenerateResult>('generate', 'POST', parsed.data);
       setOutput(result.coverLetter); setProfile(current => current && { ...current, credits: result.creditsRemaining });
-      setNotice('Your letter is ready. Review the details before sending.');
+      setNotice(localMode ? 'Your template draft is ready. Review the matched excerpts and apply any editing notes before sending.' : 'Your letter is ready. Review the details before sending.');
     });
   }
   async function loadHistory(more = false) {
@@ -117,7 +118,7 @@ export default function App() {
 
   return <div className="app-shell">
     <header className="topbar"><a className="brand" href="#" onClick={e => { e.preventDefault(); setTab('write'); }} aria-label="Better Cover home"><span className="brand-mark">b<span>c</span></span><span>better<span className="font-normal">cover</span><small>A LITTLE CLOSER TO YOUR NEXT CHAPTER</small></span></a>
-      {signedIn && <button className="text-button" disabled={disabled} onClick={() => void run('Signing out…', logout)}>Sign out</button>}
+      {signedIn && !localMode && <button className="text-button" disabled={disabled} onClick={() => void run('Signing out…', logout)}>Sign out</button>}
     </header>
     {error && <div role="alert" className="message error">{error}<button aria-label="Dismiss error" onClick={() => setError('')}>×</button></div>}
     {notice && <div role="status" className="message success">{notice}</div>}
@@ -134,9 +135,10 @@ export default function App() {
         <p className="auth-switch">{signup ? 'Already have an account?' : 'New here?'} <button disabled={disabled} className="text-button" onClick={() => { setSignup(!signup); setError(''); }}>{signup ? 'Sign in' : 'Create an account'}</button></p>
       </div><p className="footnote">Your resume stays in your account. Job details are read only when you ask.</p>
     </main> : <>
-      <div className="account-strip"><span className="truncate">{profile?.email || 'Your workspace'}</span><span className="credit-pill"><span className="dot"/>{profile?.user_type === 'premium' ? 'Unlimited letters' : `${profile?.credits ?? '—'} letters left`}</span></div>
+      <div className="account-strip"><span className="truncate">{localMode ? 'Private workspace on this browser' : profile?.email || 'Your workspace'}</span><span className="credit-pill"><span className="dot"/>{localMode ? 'Free local drafts' : profile?.user_type === 'premium' ? 'Unlimited letters' : `${profile?.credits ?? '—'} letters left`}</span></div>
       <nav className="tabs" aria-label="Workspace"><button disabled={disabled} className={tab === 'write' ? 'active' : ''} onClick={() => setTab('write')}>Write a letter</button><button disabled={disabled} className={tab === 'resumes' ? 'active' : ''} onClick={() => setTab('resumes')}>My resumes <span>{resumes.length}</span></button><button disabled={disabled} className={tab === 'history' ? 'active' : ''} onClick={() => { setTab('history'); void run('Loading history…', () => loadHistory()); }}>History</button></nav>
       <main className="workspace">
+      {localMode && <p className="muted">Template mode: no account, AI service, or generation fees. Resumes and history stay in this browser. Templates use matching skills and resume excerpts; review and edit every draft.</p>}
       {tab === 'write' && <>
         <div className="page-heading"><div className="eyebrow">MAKE A GOOD FIRST IMPRESSION</div><h1>Open the <em>right door.</em></h1><p className="muted">Your experience, shaped for this opportunity.</p></div>
         <form onSubmit={generate}>
@@ -154,11 +156,12 @@ export default function App() {
           </section>
           <section className="card"><div className="section-heading"><span className="step">03</span><h2>Make it sound like you</h2></div>
             <label>Tone<div className="segmented">{(['professional', 'friendly', 'confident'] as const).map(value => <button type="button" key={value} className={tone === value ? 'selected' : ''} aria-pressed={tone === value} onClick={() => setTone(value)}>{value}</button>)}</div></label>
-            <label>Letter length <span className="muted font-normal">{({ short: '150–200', medium: '250–350', long: '400–500' })[length]} words</span><input aria-label="Letter length" type="range" min="0" max="2" step="1" value={['short', 'medium', 'long'].indexOf(length)} onChange={e => setLength((['short', 'medium', 'long'] as const)[Number(e.target.value)])}/><div className="range-labels"><span>Brief</span><span>Balanced</span><span>Detailed</span></div></label>
-            <label>Anything else? <span className="muted font-normal">Optional</span><textarea maxLength={2000} rows={3} value={custom} onChange={e => setCustom(e.target.value)} placeholder="Focus on my leadership experience. Keep the opening direct…"/></label>
+            <label>Letter length <span className="muted font-normal">{localMode ? `${({ short: 1, medium: 2, long: 3 })[length]} matching resume excerpt${length === 'short' ? '' : 's'} maximum` : `${({ short: '150–200', medium: '250–350', long: '400–500' })[length]} words`}</span><input aria-label="Letter length" type="range" min="0" max="2" step="1" value={['short', 'medium', 'long'].indexOf(length)} onChange={e => setLength((['short', 'medium', 'long'] as const)[Number(e.target.value)])}/><div className="range-labels"><span>Brief</span><span>Balanced</span><span>Detailed</span></div></label>
+            <label>{localMode ? 'Editing notes' : 'Anything else?'} <span className="muted font-normal">Optional</span><textarea maxLength={2000} rows={3} value={custom} onChange={e => setCustom(e.target.value)} placeholder="Focus on my leadership experience. Keep the opening direct…"/></label>
+            {localMode && <p className="field-hint">Notes are reminders for your edits. Templates do not interpret custom instructions automatically.</p>}
           </section>
-          <button className="primary generate-button" disabled={disabled || !resumes.length || (profile?.credits === 0 && profile.user_type !== 'premium')}>{busy === 'Writing your letter…' ? <><span className="spinner"/> Writing your letter…</> : <>✦ Generate my cover letter <span>→</span></>}</button>
-          <p className="footnote">One letter, one credit. Your experience is the source of every claim.</p>
+          <button className="primary generate-button" disabled={disabled || !resumes.length || (!localMode && profile?.credits === 0 && profile.user_type !== 'premium')}>{busy === 'Writing your letter…' ? <><span className="spinner"/> Writing your letter…</> : <>✦ {localMode ? 'Create my template draft' : 'Generate my cover letter'} <span>→</span></>}</button>
+          <p className="footnote">{localMode ? 'Free to use. Your resume and job details stay in this browser.' : 'One letter, one credit. Your experience is the source of every claim.'}</p>
         </form>
         {output && <section className="card result-card"><div className="section-heading"><span className="dot"/><h2>Your next introduction</h2><span className="tag">{words} words</span></div><label className="sr-only" htmlFor="letter">Edit your cover letter</label><textarea id="letter" className="letter-editor" value={output} rows={18} onChange={e => setOutput(e.target.value)}/><div className="result-actions"><button className="primary" disabled={disabled} onClick={() => void run('Copying…', async () => { await navigator.clipboard.writeText(output); setNotice('Letter copied to clipboard.'); })}>Copy letter</button><button className="secondary" onClick={download}>Download .txt</button></div><p className="field-hint">Edits are kept in this browser session. History keeps the original generated letter.</p></section>}
       </>}

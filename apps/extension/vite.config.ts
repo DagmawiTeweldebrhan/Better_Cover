@@ -6,6 +6,6 @@ import { manifest } from './manifest.config.ts';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_');
-  return { plugins: [react(), tailwind(), crx({ manifest: manifest(env.VITE_API_URL || 'http://localhost:3001', env.VITE_EXTENSION_PUBLIC_KEY) })],
+  return { plugins: [react(), tailwind(), crx({ manifest: manifest(env.VITE_API_URL || 'http://localhost:3001', env.VITE_EXTENSION_PUBLIC_KEY, env.VITE_DRAFT_MODE === 'cloud') })],
     server: { port: 5173, strictPort: true }, build: { sourcemap: false } };
 });

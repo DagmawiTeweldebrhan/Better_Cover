@@ -1,6 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { extractorFor } from '../content/extractors';
 import contentScript from '../content/job-content.ts?script';
+import { localRequest } from './local';
+
+const localMode = import.meta.env.VITE_DRAFT_MODE !== 'cloud';
 
 const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '');
 type Session = { access_token: string; refresh_token: string; expires_at: number };
@@ -95,6 +98,12 @@ async function oauthLogin() {
   await storeSession(result.data.session as Session, epoch);
 }
 async function handle(message: Record<string, any>) {
+  if (localMode) {
+    await storageReady;
+    if (message.type === 'AUTH_STATUS') return { signedIn: true };
+    if (message.type === 'API') return localRequest(message.path, message.method, message.body);
+    if (['LOGIN', 'SIGNUP', 'OAUTH', 'LOGOUT'].includes(message.type)) throw new Error('Local template mode does not require an account.');
+  }
   switch (message.type) {
     case 'AUTH_STATUS': return { signedIn: !!(await getSession()) };
     case 'LOGIN': {

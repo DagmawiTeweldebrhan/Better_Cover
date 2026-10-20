@@ -8,7 +8,7 @@ describe('local template drafting', () => {
     expect(draft).toContain('Frontend Engineer position at Acme');
     expect(draft).toContain('Built accessible React and TypeScript applications with product designers.');
     expect(draft).not.toContain('fundraising'); expect(draft).not.toContain('alex@example.com');
-    expect(draft).toContain('Alex Morgan');
+    expect(draft).toMatch(/Sincerely,$/);
   });
   it('does not invent job-required skills absent from the resume', () => {
     const draft = createTemplateDraft({ ...input, jobDescription: 'Need Python, Kubernetes, SQL and Java' }, 'Managed a team of customer service representatives and improved scheduling.');
