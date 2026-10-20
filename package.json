@@ -15,7 +15,8 @@
     "test": "vitest run",
     "check": "npm run typecheck && npm test && npm run build",
     "preview:test": "node scripts/preview.mjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "icons": "node scripts/create-icons.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.10",

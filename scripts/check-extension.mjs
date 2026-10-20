@@ -13,5 +13,6 @@ const worker = await readFile(resolve(root, workerPath), 'utf8');
 assert.ok(worker.includes('AUTH_STATUS'), 'Compiled service worker must contain auth routing');
 assert.ok(worker.includes('TRUSTED_CONTEXTS'), 'Compiled service worker must restrict credential storage');
 for (const script of manifest.content_scripts.flatMap(entry => entry.js)) await access(resolve(root, script));
+for (const icon of Object.values(manifest.icons || {})) await access(resolve(root, icon));
 assert.ok(!manifest.host_permissions.includes('<all_urls>'));
 console.log('Packaged extension manifest, service worker, and content scripts verified.');
