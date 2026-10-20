@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { extractorFor } from '../content/extractors';
-import contentScript from '../content/index.ts?script';
+import contentScript from '../content/job-content.ts?script';
 
 const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '');
 type Session = { access_token: string; refresh_token: string; expires_at: number };
@@ -127,8 +127,9 @@ async function handle(message: Record<string, any>) {
   }
 }
 chrome.runtime.onMessage.addListener((message, sender, respond) => {
-  // Only extension pages can access auth and API routes. Content scripts have a tab sender.
-  if (sender.id !== chrome.runtime.id || sender.tab || !sender.url?.startsWith(chrome.runtime.getURL('')) || message?.type === 'EXTRACT_JOB') return;
+  // Sender URLs are browser supplied: content scripts have the host page URL.
+  // Extension pages may themselves be open in a tab (for setup or accessibility).
+  if (sender.id !== chrome.runtime.id || !sender.url?.startsWith(chrome.runtime.getURL('')) || message?.type === 'EXTRACT_JOB') return;
   void handle(message).then(data => respond({ ok: true, data }), error => respond({ ok: false, error: error.message || 'Request failed. Please try again.' }));
   return true;
 });

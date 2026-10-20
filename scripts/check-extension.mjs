@@ -1,0 +1,17 @@
+import { readFile, access } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import assert from 'node:assert/strict';
+const root = resolve('apps/extension/dist');
+const manifest = JSON.parse(await readFile(resolve(root, 'manifest.json'), 'utf8'));
+assert.equal(manifest.manifest_version, 3);
+assert.equal(manifest.background.type, 'module');
+await access(resolve(root, manifest.side_panel.default_path));
+const workerLoader = await readFile(resolve(root, manifest.background.service_worker), 'utf8');
+const workerPath = /import\s*['"]\.\/(.*?)['"]/.exec(workerLoader)?.[1];
+assert.ok(workerPath, 'Service-worker loader must import its compiled entry');
+const worker = await readFile(resolve(root, workerPath), 'utf8');
+assert.ok(worker.includes('AUTH_STATUS'), 'Compiled service worker must contain auth routing');
+assert.ok(worker.includes('TRUSTED_CONTEXTS'), 'Compiled service worker must restrict credential storage');
+for (const script of manifest.content_scripts.flatMap(entry => entry.js)) await access(resolve(root, script));
+assert.ok(!manifest.host_permissions.includes('<all_urls>'));
+console.log('Packaged extension manifest, service worker, and content scripts verified.');

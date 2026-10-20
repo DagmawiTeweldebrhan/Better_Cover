@@ -18,8 +18,8 @@ export function manifest(apiUrl: string, publicKey?: string) {
     host_permissions: [...jobMatches, `${api.origin}/*`],
     action: { default_title: 'Open Better Cover' },
     side_panel: { default_path: 'index.html' },
-    background: { service_worker: 'src/background/index.ts', type: 'module' },
-    content_scripts: [{ matches: jobMatches, js: ['src/content/index.ts'], run_at: 'document_idle' }],
+    background: { service_worker: 'src/background/worker.ts', type: 'module' },
+    content_scripts: [{ matches: jobMatches, js: ['src/content/job-content.ts'], run_at: 'document_idle' }],
     content_security_policy: { extension_pages: "script-src 'self'; object-src 'self'" },
   });
 }
