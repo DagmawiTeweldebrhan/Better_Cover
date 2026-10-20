@@ -1,5 +1,5 @@
 import { defineManifest } from '@crxjs/vite-plugin';
-import identity from '../../config/extension-identity.json';
+import identity from '../../config/extension-identity.json' with { type: 'json' };
 
 export const jobMatches = [
   '*://*.linkedin.com/*', '*://*.indeed.com/*', '*://*.greenhouse.io/*',

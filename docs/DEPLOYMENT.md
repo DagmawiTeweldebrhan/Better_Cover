@@ -2,6 +2,10 @@
 
 Updated October 20, 2026.
 
+## Active release: local template mode
+
+The user's zero-budget choice is implemented as the default build. Resumes and letter history are stored in local extension storage, and templates run in the service worker. No Supabase account, OpenAI key, Render service, or backend process is required to use this version. Its manifest omits `identity` and API host permissions. Browser tests verify drafting with service-worker fetch disabled. Cloud services below are retained for optional future use and are not contacted in local mode.
+
 ## Supabase
 
 - Project: `Better_Cover` (`iozeijrjelovwoqcrlmh`).
@@ -22,11 +26,11 @@ Chrome Web Store assigns the published item's identity. Once the draft item exis
 - Render API credentials are verified, but automatic approval review blocked service creation with `blocked by policy`. No Render service was created.
 - Live email/password sign-in, profile initialization, and resume storage have been tested using an isolated synthetic account; test records were removed afterward.
 - OpenAI model access works, but generation returns HTTP 429, `credit_balance_exhausted` / `insufficient_quota`. Further paid requests are stopped under the user's zero-budget constraint.
-- Choose and implement a zero-cost generation option before completing the generation flow.
+- Local template drafting is implemented and tested as the zero-cost alternative. The original paid AI path remains unavailable until its quota is funded.
 - Configure email delivery and Google OAuth for public signup.
 - Finalize operator contact, privacy-policy URL, and store reviewer access.
-- Upload a draft item to the Chrome Web Store, configure its identity, and submit the tested package.
+- Public store publication still needs an authenticated developer dashboard and, if not already paid, the developer registration fee. The local build can be shared and installed unpacked without store publication.
 
 ## Live verification
 
-`npm.cmd run test:live -- --skip-generation` verifies real account authentication and resume CRUD without making an AI request. Running `node scripts/smoke-live.mjs` without `--skip-generation` attempts one real generation; do that only after a working generation provider is configured. The script creates and deletes only its own synthetic test account.
+`npm.cmd run test:live` verifies real account authentication and resume CRUD without making an AI request. Passing `--generate` explicitly attempts one real cloud generation; do that only after a working generation provider is configured. The script creates and deletes only its own synthetic test account. This cloud check is unnecessary for the free local extension.

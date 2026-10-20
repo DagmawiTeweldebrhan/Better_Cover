@@ -1,8 +1,25 @@
 # Better Cover
 
-A Chrome / Edge side panel that turns a saved resume and a job description into an editable cover letter. Built from [the system architecture](system_architecture_document.md).
+A Chrome / Edge side panel that turns a saved resume and a job description into an editable cover letter. The default version runs entirely in the browser using templates: no account, AI service, hosting, or generation fees. The original cloud AI backend remains optional. Built from [the system architecture](system_architecture_document.md), with local template mode added for a zero-budget setup.
+
+## Install the free local version
+
+```powershell
+npm.cmd ci
+npm.cmd run build -w @better-cover/extension
+```
+
+Open `chrome://extensions` or `edge://extensions`, enable Developer mode, choose **Load unpacked**, and select `apps/extension/dist`. Click Better Cover's toolbar action to open its side panel. Add a text/Markdown resume, import or paste a job, then choose **Create my template draft**. No backend process or API key is needed.
+
+Resumes and original drafted letters stay in this browser profile's local extension storage. Editor changes and editing notes persist for the browser session. Removing the extension or clearing its storage removes the local workspace, so download anything you want to keep. Template mode does not access Supabase or OpenAI and does not charge credits. Local drafts do not synchronize across machines.
+
+Templates use skills found in both documents and matching resume excerpts. They use predefined tone/length structures and cannot interpret arbitrary editing notes; apply those yourself in the editor. Review the result, add your name after the closing, and check factual details before sending.
+
+The package can be shared as a ZIP for unpacked installation. Public Chrome Web Store distribution still requires the developer registration fee if it has not already been paid. The store listing must describe the local template version accurately.
 
 ## Included
+
+Local mode includes job extraction, multiple resumes, tone/detail options, editing notes, an editable draft, copy/download, and local history. The account, cloud-storage, and AI features below apply only to optional cloud mode.
 
 - React, TypeScript, Tailwind, Vite, CRXjs, and a Manifest V3 service worker.
 - Job extraction for LinkedIn, Indeed, Greenhouse, Lever, and Handshake, with JSON-LD fallback and manual entry.
@@ -18,6 +35,8 @@ A Chrome / Edge side panel that turns a saved resume and a job description into 
 ## Run locally
 
 For an interactive UI preview without credentials or extension installation, run `npm.cmd run demo` and open `http://127.0.0.1:4174`. This clearly labeled demo uses sample data and fixed example letters; it does not authenticate real accounts, scrape your tabs, or call AI. Changes stay in the current browser tab's session. The demo adapter is served separately and is never bundled into the extension.
+
+The following service setup is needed only for cloud mode. Set `VITE_DRAFT_MODE=cloud` in `apps/extension/.env` before building that version; leave it `local` or unset for the free default.
 
 Use Node.js 24 and npm. In PowerShell, use `npm.cmd` if execution policy blocks `npm.ps1`.
 
@@ -55,7 +74,7 @@ npm.cmd audit
 
 `check` runs type checking, API/extractor/database tests, both production builds, and a packaged-extension entry-point check. Database tests execute the migration in an in-memory PostgreSQL instance with Supabase auth roles and RLS. Browser tests exercise the UI with controlled responses and load the actual compiled extension in Chromium. They require no paid APIs or real account credentials. Live Supabase, Google, OpenAI calls and current authenticated job-board markup must also be checked with your configured accounts before release.
 
-With real backend credentials configured, `npm.cmd run test:live -- --skip-generation` verifies authentication and resume CRUD without AI charges. Omit `--skip-generation` only when you intend to exercise the configured generation provider. These checks use synthetic data and delete their own test account afterward. See [deployment state](docs/DEPLOYMENT.md) for the current external-service blockers.
+With real backend credentials configured, `npm.cmd run test:live` verifies authentication and resume CRUD without AI charges. Add `-- --generate` only when you explicitly intend to exercise the configured generation provider. These checks use synthetic data and delete their own test account afterward. They are not needed for local mode. See [deployment state](docs/DEPLOYMENT.md) for the current external-service blockers.
 
 ## Deploy
 

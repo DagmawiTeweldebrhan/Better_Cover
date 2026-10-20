@@ -1,6 +1,6 @@
 # Chrome Web Store submission draft
 
-These fields describe the current implementation. Submission is pending a live backend, working authentication, account credentials for review, screenshots, and published contact/privacy URLs.
+These fields describe the default free local template build. Submission is pending screenshots, published contact/privacy URLs, and access to the Chrome Web Store developer dashboard. The optional cloud AI build needs different disclosures and is not this release.
 
 ## Name
 
@@ -8,24 +8,24 @@ Better Cover
 
 ## Short description
 
-Turn your resume and a job description into a tailored, editable cover letter in a browser side panel.
+Create editable cover-letter drafts from resume templates and matching job details, privately in your browser.
 
 ## Detailed description
 
-Write a cover letter grounded in your experience and tailored to your next opportunity.
+Create a cover-letter draft grounded in your resume and matching job details, with no account or AI subscription.
 
-Better Cover brings your resume, the job description, and your writing preferences together in Chrome's side panel. Import job details from LinkedIn, Indeed, Greenhouse, Lever, or Handshake, or enter them yourself. Review imported details before generating.
+Better Cover brings your resume, the job description, and template preferences together in Chrome's side panel. Import job details from LinkedIn, Indeed, Greenhouse, Lever, or Handshake, or enter them yourself. Review imported details before drafting.
 
 - Save multiple resume versions as text or Markdown.
 - Choose a professional, friendly, or confident tone.
-- Select a brief, balanced, or detailed letter.
-- Add preferences such as skills to emphasize or phrases to avoid.
-- Edit the generated letter, copy it, or download it as a text file.
-- Revisit generated letters in your account history.
+- Select brief, balanced, or detailed templates with different numbers of matched resume excerpts.
+- Keep editing notes to apply when reviewing your draft.
+- Edit the drafted letter, copy it, or download it as a text file.
+- Revisit drafted letters in local browser history.
 
-An account is required. Standard accounts receive ten generation credits per UTC calendar month. Job-board layouts can change; manual entry is available when extraction misses information. Always review your letter before using it.
+No account, backend, AI service, or generation credits are needed. Templates use matched skills and resume excerpts rather than a language model. Editing notes are not interpreted automatically. Review your letter, add your signature, and check the facts before using it. Job-board layouts can change; manual entry is available when extraction misses information.
 
-Generation sends the selected resume, job details, and writing preferences through our backend to OpenAI. Resumes and generated letters are stored in your Supabase-backed account. Better Cover does not submit applications for you.
+Resumes and original drafted letters are stored in this browser profile. No document text is sent to OpenAI, Supabase, or another drafting server in this version. Removing the extension or clearing its storage deletes local data. Download letters you want to keep. Better Cover does not submit applications for you.
 
 ## Single purpose
 
@@ -36,28 +36,25 @@ Help users create and edit cover letters using their stored resumes and job desc
 | Permission | Use |
 | --- | --- |
 | `activeTab` | Identify the current job tab after the user invokes the extension. |
-| `storage` | Keep the authentication session and writing draft; restrict token storage to trusted extension contexts. |
+| `storage` | Keep resumes and original letter history locally, plus the current browser-session editor draft and editing notes. |
 | `sidePanel` | Display the resume, job, generation, editor, and history interface beside the job page. |
-| `identity` | Complete the user-initiated Supabase Google OAuth redirect flow with `launchWebAuthFlow`. |
 | `scripting` | Load the extractor when an already-open supported job tab does not yet have its content script. |
 | Supported job-board hosts | Read job title, company, and description when the user requests an import. |
-| Deployed API host | Authenticate the user and access their resumes, generation history, and cover-letter generation endpoint. |
 
 ## Data disclosures to enter accurately in the dashboard
 
-Account email, resumes and any personal information the user puts in them, selected job details, writing preferences, authentication tokens, and generated letters are processed by this product. Do not declare that the extension collects no data. Distinguish locally stored session tokens/drafts from account records stored on the backend and document text sent to the AI provider.
+The extension processes resume text, selected job details, preferences, and drafted letters locally. It does not transmit this information to the developer or an AI service. The user may explicitly copy or download it. Describe this local processing accurately in the privacy policy and answer dashboard questions according to Google's current definition of collection. There is no account login or developer-operated data collection in the local build.
 
-The extension bundles its executable JavaScript locally. The API returns data and generated text; it does not supply remotely executed extension code.
+The extension bundles its executable JavaScript and templates locally and does not load remotely executed code.
 
 ## Reviewer setup
 
-Supply a dedicated test account with sufficient credits through the dashboard's private reviewer instructions. Include how to open the side panel, save a sample resume, import or paste a job, generate a letter, and inspect history. Never put review-account passwords in this repository. Verify both email and Google login before claiming both work in the submitted release.
+No test account is needed. Open the side panel, save a synthetic sample resume, import or paste a matching job, choose **Create my template draft**, edit/download it, and inspect history. State clearly that this package uses templates and has no AI or sign-in requirement.
 
 ## Required live values before submission
 
-- Production API URL and matching extension host permission.
-- Chrome Web Store item ID, matching backend allowed origin, and Google OAuth redirect.
-- Public privacy-policy URL describing the deployed service, processors, retention, deletion, and actual operator contact.
+- Chrome Web Store item ID and package public key for a consistent development identity; no backend CORS or OAuth configuration is required for local mode.
+- Public privacy-policy URL describing local storage, deletion, and the actual operator contact.
 - Support URL/contact and applicable developer account disclosures.
 - Screenshots of the configured extension using synthetic sample data.
 
