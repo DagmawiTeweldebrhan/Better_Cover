@@ -16,7 +16,8 @@
     "check": "npm run typecheck && npm test && npm run build",
     "preview:test": "node scripts/preview.mjs",
     "test:e2e": "playwright test",
-    "icons": "node scripts/create-icons.mjs"
+    "icons": "node scripts/create-icons.mjs",
+    "demo": "npm run build -w @better-cover/extension && node scripts/demo.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.10",

@@ -17,6 +17,8 @@ A Chrome / Edge side panel that turns a saved resume and a job description into 
 
 ## Run locally
 
+For an interactive UI preview without credentials or extension installation, run `npm.cmd run demo` and open `http://127.0.0.1:4174`. This clearly labeled demo uses sample data and fixed example letters; it does not authenticate real accounts, scrape your tabs, or call AI. Changes stay in the current browser tab's session. The demo adapter is served separately and is never bundled into the extension.
+
 Use Node.js 24 and npm. In PowerShell, use `npm.cmd` if execution policy blocks `npm.ps1`.
 
 ```powershell
