@@ -1,4 +1,4 @@
-// Uses real configured services. Pass --skip-generation to avoid AI charges.
+// Uses real configured services. AI calls require an explicit --generate flag.
 // Deletes only its own synthetic test account.
 import { readFile } from 'node:fs/promises';
 import { parseEnv } from 'node:util';
@@ -11,7 +11,7 @@ import assert from 'node:assert/strict';
 const config = { ...parseEnv(await readFile('apps/api/.env', 'utf8')), ...process.env };
 const port = '34107';
 const base = `http://127.0.0.1:${port}`;
-const skipGeneration = process.argv.includes('--skip-generation');
+const skipGeneration = !process.argv.includes('--generate');
 const admin = createClient(config.SUPABASE_URL, config.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
 let userId;
 let server;
